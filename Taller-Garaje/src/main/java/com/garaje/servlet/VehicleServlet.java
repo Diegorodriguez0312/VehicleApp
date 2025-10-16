@@ -86,7 +86,7 @@ public class VehicleServlet extends HttpServlet {
                 request.setAttribute("mensaje", "✏️ Vehículo actualizado correctamente.");
 
             } else {
-                // Agregar nuevo vehículo (ya lo tenías)
+                // Agregar nuevo vehículo 
                 Vehiculo nuevoVehiculo = new Vehiculo();
                 nuevoVehiculo.setMarca(request.getParameter("marca"));
                 nuevoVehiculo.setModelo(request.getParameter("modelo"));
@@ -95,7 +95,12 @@ public class VehicleServlet extends HttpServlet {
                 nuevoVehiculo.setPropietario(request.getParameter("propietario"));
 
                 vehiculoFacade.agregar(nuevoVehiculo);
-                request.setAttribute("mensaje", "✅ Vehículo agregado correctamente.");
+                // Si es Ferrari, mostrar mensaje especial
+                if ("Ferrari".equalsIgnoreCase(nuevoVehiculo.getMarca())) {
+                    request.setAttribute("mensaje", "🏎️ ¡Vehículo Ferrari agregado! Notificación enviada.");
+                } else {
+                    request.setAttribute("mensaje", "✅ Vehículo agregado correctamente.");
+                }
             }
 
         } catch (BusinessException be) {

@@ -81,37 +81,37 @@ public class VehiculoFacade {
      * @throws SQLException si hay error en la base de datos
      * @throws BusinessException si falla alguna regla de negocio
      */
-    public void agregar(Vehiculo v) throws SQLException, BusinessException {
-        // DEBUG opcional
-        System.out.println("DEBUG: Entrando a VehiculoFacade.agregar()");
-        System.out.println("DEBUG: DataSource = " + ds);
+    public String agregar(Vehiculo v) throws SQLException, BusinessException {
+    System.out.println("DEBUG: Entrando a VehiculoFacade.agregar()");
+    System.out.println("DEBUG: DataSource = " + ds);
 
-        // Validaciones de negocio (lanzan BusinessException si fallan)
-        validarCamposBasicos(v);
-        validarPropietario(v.getPropietario());
-        validarLongitudMinima(v.getMarca(), "marca", 3);
-        validarLongitudMinima(v.getModelo(), "modelo", 3);
-        validarLongitudMinima(v.getPlaca(), "placa", 3);
-        validarColor(v.getColor());
-        validarAntiguedadModelo(v.getModelo());
-        validarSQLInjection(v);
+    validarCamposBasicos(v);
+    validarPropietario(v.getPropietario());
+    validarLongitudMinima(v.getMarca(), "marca", 3);
+    validarLongitudMinima(v.getModelo(), "modelo", 3);
+    validarLongitudMinima(v.getPlaca(), "placa", 3);
+    validarColor(v.getColor());
+    validarAntiguedadModelo(v.getModelo());
+    validarSQLInjection(v);
 
-        try (Connection con = ds.getConnection()) {
-            VehiculoDAO dao = new VehiculoDAO(con);
+    try (Connection con = ds.getConnection()) {
+        VehiculoDAO dao = new VehiculoDAO(con);
 
-            // Verificar que la placa no esté duplicada
-            if (dao.existePlaca(v.getPlaca())) {
-                throw new BusinessException("La placa " + v.getPlaca() + " ya existe en el sistema");
-            }
+        if (dao.existePlaca(v.getPlaca())) {
+            throw new BusinessException("La placa " + v.getPlaca() + " ya existe en el sistema");
+        }
 
-            dao.agregar(v);
+        dao.agregar(v);
 
-            // Simular notificación para Ferrari
-            if ("Ferrari".equalsIgnoreCase(v.getMarca())) {
-                enviarNotificacionFerrari(v);
-            }
+        if ("Ferrari".equalsIgnoreCase(v.getMarca())) {
+            enviarNotificacionFerrari(v);
+            return "¡Notificación enviada! Se registró un Ferrari correctamente.";
+        } else {
+            return "Vehículo agregado exitosamente.";
         }
     }
+}
+
 
     /**
      * Actualiza vehículo; incluir reglas de negocio.
